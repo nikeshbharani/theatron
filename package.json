@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node server.js & peerjs --port 3001",
+
     "monStart": "nodemon server.js"
   },
   "keywords": [],
