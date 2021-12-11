@@ -2,7 +2,7 @@ const socket = io('/')
 const videoGrid = document.getElementById('video-grid');
 //console.log(videoGrid);
 const myPeer = new Peer(undefined,{
-    host: '/',
+    host: 'https://virtual-theatre3.herokuapp.com/',
     port: '3001'
 });
 
