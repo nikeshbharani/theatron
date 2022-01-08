@@ -3,9 +3,10 @@ const videoGrid = document.getElementById('video-grid');
 //console.log(videoGrid);
 const myPeer = new Peer(undefined,{
     host: '/',
-    port: '443'
+    port: '3001'
 });
 
+var userName = "";
 const peers = {};
 const myVideo = document.createElement('video');
 myVideo.muted = true;
@@ -60,7 +61,7 @@ function addVideoStream(video, stream) {
     video.addEventListener('loadedmetadata', () => {
       video.play()
     })
-    videoGrid.append(video)
+    //videoGrid.append(video)
   }
 
   const vidPlayer = document.getElementById('videoPlayer');
@@ -68,49 +69,133 @@ function addVideoStream(video, stream) {
   vidButton.addEventListener('click', ()=>{
       if(vidPlayer.paused)
       {
+          console.log('trigger1');
           vidPlayer.play();
           vidButton.innerText = 'pause';
           socket.emit('play')
       }
       else
       {
+          console.log('trigger2');
           vidPlayer.pause();
           vidButton.innerText = 'play';
           socket.emit('pause')
       }
   })
 
-  vidPlayer.addEventListener('pause',()=>{
-    vidPlayer.pause();
+  var isManual = true;
+
+    vidPlayer.addEventListener('pause',()=>{
     vidButton.innerText = 'play';
-    socket.emit('pause')
+    if(isManual)
+    {
+      console.log('manual');
+      socket.emit('pause')
+    }
+    else
+    {
+      console.log('automatic');
+      isManual = true;
+    }
   })
   
-  vidPlayer.addEventListener('play',()=>{
-    vidPlayer.play();
+  vidPlayer.addEventListener('play', ()=>{
+    
     vidButton.innerText = 'pause';
-    socket.emit('play')
+    if(isManual)
+    {
+      console.log('manual');
+      socket.emit('play')
+      console.log(isManual);
+    }
+    else
+    {
+      console.log('automatic');
+      isManual = true;
+    }
+  })
+
+  var manualSeeked = true;
+  vidPlayer.addEventListener('seeked',()=>{
+    if(manualSeeked)
+      socket.emit('position-update',vidPlayer.currentTime);
+      manualSeeked = true;
   })
 
   socket.on('video-played', ()=>{
-    vidPlayer.play();
-    vidButton.innerText = 'pause';
+    isManual = false;
+    vidPlayer.play(); 
   })
 
   socket.on('video-paused', ()=>{
+    isManual = false;
     vidPlayer.pause();
-    vidButton.innerText = 'play';
   })
   
-  /*vidPlayer.addEventListener('seeking',()=>{
-    vidPlayer.pause();
-    vidButton.innerText = 'play';
-  })*/
+  socket.on('new-position', (time)=>{
+    manualSeeked = false;
+    vidPlayer.currentTime = time;
+  })
 
-  /*vidPlayer.addEventListener('seeked',()=>{
-    
-      socket.emit('positionChanged', vidPlayer.currentTime)
-      vidPlayer.play();
-    console.log('played');
-    vidButton.innerText = 'pause';
-  })*/
+  socket.on('new-text-addition',(text, uid, name)=>{
+    var textDiv = document.createElement('div');
+    var nameSpan = document.createElement('span');
+    var messageSpan = document.createElement('span');
+    textDiv.classList.add("textDiv");
+    nameSpan.innerText = name + ": ";
+    messageSpan.innerText = text;
+    nameSpan.classList.add("nameSpan");
+    textDiv.appendChild(nameSpan);
+    textDiv.appendChild(messageSpan);
+    chatArea.appendChild(textDiv);
+  })
+
+  const chatArea = document.getElementById("chatArea");
+  const tform = document.getElementById('tform');
+  tform.addEventListener('submit', (event)=>{
+    event.preventDefault();
+    var text = tform.elements['ctextBox'].value;
+    if(text!=="")
+    {
+       console.log(text);
+       var textDiv = document.createElement('div');
+       var nameSpan = document.createElement('span');
+       var messageSpan = document.createElement('span');
+       textDiv.classList.add("textDiv");
+       nameSpan.innerText = "You: ";
+       messageSpan.innerText = text;
+       nameSpan.classList.add("nameSpan");
+       textDiv.appendChild(nameSpan);
+       textDiv.appendChild(messageSpan);
+       chatArea.appendChild(textDiv);
+       //console.log(textDiv);
+       tform.elements['ctextBox'].value = "";
+       socket.emit('new-chat', text, userName);
+    }
+  })
+
+
+  //frontend stuff
+
+  const modalEle = document.getElementById('modal');
+  const overlayEle = document.getElementById('overlay');
+  window.onload = function(){
+    modalEle.classList.add('active');
+    overlayEle.classList.add('active');
+  } 
+
+  const nform = document.getElementById('nform');
+  nform.addEventListener('submit', (event)=>{
+        userName = nform.elements['uname'].value;
+      //console.log(userName);
+      modalEle.classList.remove('active');
+      overlayEle.classList.remove('active');
+      if(userName==="")
+      {
+        modalEle.classList.add('active');
+        overlayEle.classList.add('active');
+      }
+      event.preventDefault();
+  })
+
+

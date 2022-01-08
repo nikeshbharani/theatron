@@ -1,10 +1,10 @@
 {
-  "name": "video-chat",
+  "name": "virtual-theatre",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js & peerjs --port 443",
+    "start": "node server.js",
     "monStart": "nodemon server.js"
   },
   "keywords": [],

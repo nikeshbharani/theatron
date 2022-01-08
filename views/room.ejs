@@ -26,16 +26,127 @@
     </style> -->
 </head>
 <body>
+    <div id="topBanner">
+
+    </div>
     <div id="videoBox">
-        <video id="videoPlayer" controls muted="muted" autoplay>
+        <video id="videoPlayer" controls muted="muted">
             <source src="/video" type="video/mp4" >
         </video><br>
-        <button id="videoButton">pause</button>
+        <button id="videoButton">play</button>
+        </div>
     </div>
+    <div id="chatBox">
+        <div id="chatHead">Live Chat</div>
+        <div id="chatArea">
+            
+        </div>
+        <div id="typeArea">
+            <form id="tform" method="post">
+                <input type="text" name="ctextBox" id="ctextBox" placeholder=" Say something..."/><button id="sendButton">Send</button>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="modal">
+        <div class="modal-header">
+          <div class="title">Hey there!</div>
+        </div>
+        <div class="modal-body">
+            <form id="nform" method="post">
+                <label for="uname">What should you be called?</label>
+                <input type="text" name="uname" id="uname" placeholder="Enter your name" required>
+                <br/>
+                <div id="bid">
+                    <button type="submit" id="nbutton" >Proceed</button><br/><br/>
+                </div>
+            </form>
+        </div>
+      </div>
+      <div id="overlay" class=""></div>
+
+      <div id="video-grid"></div>
     <style>
-        #videoBox, #videoButton
+        #topBanner
+        {
+            height: 50px;
+            width: 100%;
+            background-color: rgba(33, 33, 33, 0.98);
+        }
+        #videoButton
         {
             text-align: center;
+        }
+        #videoBox
+        {
+            width:900px;
+            margin-left: 15px;
+            margin-top: 10px;
+            align-content: center;
+        }
+        #chatBox
+        {
+            height: 507px;
+            width: 402px;
+            margin-left: 930px;
+            margin-top: -540px;
+            background-color: rgba(33, 33, 33, 0.98);
+            border: 1px solid rgb(90, 90, 90);
+        }
+        #chatHead
+        {
+            width: 402px;
+            height: 36px;
+            font-family: Roboto, Arial, Sans-serif;
+            font-size: 21px;
+            padding-top: 7.5px;
+            padding-left: 13px;
+            color: white;
+            border-bottom: 1px solid rgb(90, 90, 90);
+        }
+        .textDiv
+        {
+            font-family: 'Product Sans';
+            padding-top: 10px;
+            padding-left: 10px;
+        }
+        .nameSpan
+        {
+            color: rgba(126, 125, 125, 0.98);;
+        }
+        #chatArea
+        {
+            width: 402px;
+            height: 425px;
+            color: white;
+            padding: 10px;
+        }
+        #typeArea
+        {
+            width: 402px;
+            height: 38px;
+        }
+        #ctextBox
+        {
+            width: 292px;
+            height: 37px;
+            border: none;
+            background-color: rgba(126, 125, 125, 0.98);
+            color: white;
+            font-size: 17px;
+            font-family: Roboto, Arial, Sans-serif;
+            padding: 0px;
+            padding-left: 10px;
+        }
+        #sendButton
+        {
+            width: 100px;
+            height: 37px;
+            border: none;
+            background-color: rgba(68, 68, 68, 0.98);
+            color: white;
+            font-size: 17px;
+            font-family: Roboto, Arial, Sans-serif;
+            padding:0px;
         }
         #videoPlayer
         {
@@ -43,9 +154,80 @@
         }
         body
         {
-            background-color: #121212;
+            background-color: #181818;
+        }
+        *, *::after, *::before {
+            box-sizing: border-box;
+        }
+        .modal 
+        {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: 200ms ease-in-out;
+            border: 1px solid black;
+            border-radius: 10px;
+            z-index: 10;
+            background-color: white;
+            width: 500px;
+            max-width: 80%;
+        }
+        .modal.active 
+        {
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .modal-header 
+        {
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid black;
+        }
+        .modal-header .title
+        {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        
+        .modal-body 
+        {
+            padding: 10px 15px;
+        }
+        #overlay 
+        {
+            position: fixed;
+            opacity: 0;
+            transition: 200ms ease-in-out;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, .5);
+            pointer-events: none;
+        }
+        #overlay.active 
+        {
+            opacity: 1;
+            pointer-events: all;
+        }
+        #nbutton
+        {
+            outline: none;
+            border: none;
+            background-color: rgba(33, 33, 33, 0.98);
+            color: white;
+            padding: 10px;
+            margin-top: 10px;
+            margin-left: 200px;
+        }
+        #video-grid
+        {
+            height: 0px;
+            width:0px;
         }
     </style>
-    <div id="video-grid"></div>
+    
 </body>
 </html>

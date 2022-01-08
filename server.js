@@ -3,6 +3,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const fs = require('fs');
+const { SocketAddress } = require('net');
 
 const { v4: uuidV4 } = require('uuid');
 
@@ -57,6 +58,7 @@ app.get('/:room', (req, res) => {
 
 io.on('connection', socket => {
     socket.on('join-room', (roomId, userId) => {
+        console.log(`New ${userId} Joined`);
         socket.join(roomId);
         socket.broadcast.to(roomId).emit('user-connected', userId);
         socket.on('disconnect', () => {
@@ -72,9 +74,12 @@ io.on('connection', socket => {
             socket.broadcast.to(roomId).emit('video-paused');
         })
 
-        socket.on('positionChanged', (time)=>{
-          console.log(time);
-          //socket.broadcast.to(roomId).emit('timeChange', time);
+        socket.on('position-update', (time)=>{
+          socket.broadcast.to(roomId).emit('new-position',time);
+        })
+
+        socket.on('new-chat',(text, name)=>{
+          socket.broadcast.to(roomId).emit('new-text-addition', text, userId, name);
         })
     })
 })
